@@ -119,7 +119,7 @@ bool Dlqr::loadConfigConstructor(const std::string& configPath)
     }
 
     LoadConfigLqrNode(lqrNode);
-    std::cout<<"Finished loading config constructor: "<<configPath<<std::endl;
+    std::cout<<"[Dlqr] Finished loading config constructor: "<<configPath<<std::endl;
     return true;
 }
 

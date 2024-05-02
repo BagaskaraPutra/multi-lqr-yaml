@@ -30,7 +30,7 @@ A C++ library for calculating multiple linear quadratic regulator (LQR) controll
     make
     ```
 
-1. The example executable files will be generated in the `build/examples/` directory
+1. The example executable files will be generated in the `build/examples/` directory.
 
 1. Run the executable, for example:
 
@@ -38,43 +38,23 @@ A C++ library for calculating multiple linear quadratic regulator (LQR) controll
     ./examples/multiLqr
     ```
 
+1. If you wish to run other YAML config files, add the file path after the executable. For example:
+
+    ```bash
+    ./examples/singleLqr ../config/singleLqrExample2.yaml
+    ```
+
 ## Tutorial
 
 ### Single Discrete-time LQR Gain
 
-Let's say you want to calculate the gain matrix $\mathbf{K}$ of a single discrete-time LQR controller.  
-However, you only have the continuous-time linear time-invariant (LTI) state space:
-
-$\dot{\mathbf{x}}(t)=\mathbf{A}\mathbf{x}(t) + \mathbf{B}\mathbf{u}(t)$
-
-$\mathbf{y}(t)=\mathbf{C}\mathbf{x}(t)+\mathbf{D}\mathbf{u}(t)$
-
-where the parameters $\mathbf{A}$, $\mathbf{B}$, $\mathbf{C}$, and $\mathbf{D}$ are defined in a YAML config file
-
-```yaml
-stateSpace:
-    num_inputs: 1
-    num_states: 2
-    num_outputs: 2
-    continuous:
-        A: [0.05945,0.92220,
-            -25.86632,-5.08911]
-        B: [-0.13123,
-            62.75906]
-        C: [1,0,
-            0,1]
-        D: [0,
-            0]
-        samplingPeriod: 0.024
-```
-
-By setting the `samplingPeriod` parameter, the continuous-time system will be automatically discretized into its equivalent discrete-time model:
+Let's say you want to calculate the gain matrix $\mathbf{K}$ of a single discrete-time LQR controller for a discrete-time linear time-invariant (LTI) system given by:
 
 $\mathbf{x}[k+1]=\mathbf{A}_d\mathbf{x}[k] + \mathbf{B}_d\mathbf{u}[k]$
 
 $\mathbf{y}[k]=\mathbf{C}_d\mathbf{x}[k]+\mathbf{D}_d\mathbf{u}[k]$
 
-However, if you already have a discrete-time system parameters $\mathbf{A}_d$, $\mathbf{B}_d$, $\mathbf{C}_d$, and $\mathbf{D}_d$, just define it as the following YAML config:
+Define the parameters $\mathbf{A}_d$, $\mathbf{B}_d$, $\mathbf{C}_d$, $\mathbf{D}_d$, and the sampling period (in unit of seconds) in the following YAML config:
 
 ```yaml
 stateSpace:
@@ -93,7 +73,37 @@ stateSpace:
         samplingPeriod: 0.024
 ```
 
-Set the state cost $\mathbf{Q}$ and input cost $\mathbf{R}$ weight matrices
+However, what if you only know the continuous-time LTI state space:
+
+$\dot{\mathbf{x}}(t)=\mathbf{A}\mathbf{x}(t) + \mathbf{B}\mathbf{u}(t)$
+
+$\mathbf{y}(t)=\mathbf{C}\mathbf{x}(t)+\mathbf{D}\mathbf{u}(t)$
+
+How would you design a discrete-time LQR controller for this system?
+
+Just define the continuous-time parameters $\mathbf{A}$, $\mathbf{B}$, $\mathbf{C}$, and $\mathbf{D}$ in a YAML config file as:
+
+```yaml
+stateSpace:
+    num_inputs: 1
+    num_states: 2
+    num_outputs: 2
+    continuous:
+        A: [0.05945,0.92220,
+            -25.86632,-5.08911]
+        B: [-0.13123,
+            62.75906]
+        C: [1,0,
+            0,1]
+        D: [0,
+            0]
+        samplingPeriod: 0.024
+```
+
+Notice that by setting the `samplingPeriod` parameter, the continuous-time system will be automatically discretized into its equivalent discrete-time model.  
+As of now, the default discretization method is the zero-order hold (ZOH).
+
+Set the state cost $\mathbf{Q}$ and input cost $\mathbf{R}$ weight matrices:
 
 ```yaml
 weights:
@@ -102,10 +112,19 @@ weights:
     R: [1]
 ```
 
+Running the `./examples/singleLqr` example will result in a $\mathbf{K} \in \mathbb{R}^{1\times2}$ gain matrix of type Eigen::MatrixXd with the values:
+
+```bash
+[Dlqr] Finished loading config constructor: ../config/singleLqr.yaml
+
+Single discrete-time LQR gain K: 
+ 2.74311 0.506378
+```
+
 ### Multiple Discrete-time LQR Gains
 
-You can also calculate the gains for multiple LQR controllers. First, define a YAML node named `LqrVariants:` to indicate that there will be multiple LQR configruations.  
-Then define multiple nodes  for each LQR configuration.  
+You can also calculate the gains for multiple LQR controllers. First, define a YAML node named `LqrVariants:` to indicate that there will be multiple LQR configurations.  
+Then define multiple nodes for each LQR configuration.  
 For example in the `config/multiLqr.yaml`, we define the configurations `Zero:`, `Medium:`, and `High:`.
 
 ```yaml
@@ -139,4 +158,15 @@ LqrVariants:
             ...
         weights:
             ...
+```
+
+Running the `./examples/multiLqr` example will result in a std::map where the keys are the configuration names and the values are the gain matrices:
+
+```bash
+[MultiLqrManager] Finished loading config constructor: ../config/multiLqr.yaml
+
+Multiple discrete-time LQR gains: 
+High Config Gain:  3.8063 0.52682
+Medium Config Gain:  2.74306 0.506336
+Zero Config Gain: 0 0
 ```

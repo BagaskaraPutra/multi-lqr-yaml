@@ -4,18 +4,17 @@ stateSpace:
     num_inputs: 1
     num_states: 2
     num_outputs: 2
-    continuous:
-        A: [0.05945,0.92220,
-            -25.86632,-5.08911]
-        B: [-0.13123,
-            62.75906]
+    discrete:
+        A: [0.99483,0.02080,
+            -0.58350,0.87868]
+        B: [0.01286,
+            1.41565]
         C: [1,0,
             0,1]
         D: [0,
             0]
         samplingPeriod: 0.024
-  
 weights:
     Q: [40,0,
         0,1]
-    R: [1]
+    R: [1]  
