@@ -32,7 +32,7 @@ public:
     bool LoadConfig(const std::string& configPath) override;
 
 private:
-    const int MAX_RICCATI_ITERATIONS = 152;
+    const int MAX_RICCATI_ITERATIONS = 100;
     
     bool loadConfigConstructor(const std::string& configPath);
     bool calcGain();

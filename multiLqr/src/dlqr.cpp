@@ -149,20 +149,11 @@ bool Dlqr::LoadConfig(const std::string& configPath)
 Eigen::MatrixXd Dlqr::CalcGain(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B, const Eigen::MatrixXd& Q, const Eigen::MatrixXd& R)
 {
     int num_states = A.rows();
-    const int MAX_RICCATI_ITERATIONS = 152;
-    Eigen::MatrixXd P(num_states,num_states), Pt(num_states, MAX_RICCATI_ITERATIONS*num_states);
-
-    P = MatrixXd::Zero(P.rows(),P.cols());
-    Pt = MatrixXd::Zero(Pt.rows(),Pt.cols());
-    for (int i=MAX_RICCATI_ITERATIONS; i>0; i--)
-    {
+    const int MAX_RICCATI_ITERATIONS = 100;
+    Eigen::MatrixXd P = Q;
+    for (int i=MAX_RICCATI_ITERATIONS; i>0; i--){
         P = Q + A.transpose()*P*A-A.transpose()*P*B*(R+B.transpose()*P*B).inverse()*B.transpose()*P*A;
-        // Pt << P, Pt;
-        Pt.block(0,(i-1)*P.cols(),P.rows(),P.cols()) = P;
     }
-    // std::cout<<"P: "<<P<<std::endl;
-    // std::cout<<"Pt: "<<Pt<<std::endl;
-    P = Pt.block(0,0,P.rows(),P.cols());
     return (R+B.transpose()*P*B).inverse()*B.transpose()*P*A;
 }
 
@@ -187,22 +178,13 @@ bool Dlqr::calcGain()
         return false;
     }
 
-    // TODO: Optimize Riccati variables P & Pt
-    Eigen::MatrixXd P(_num_states,_num_states), Pt(_num_states, MAX_RICCATI_ITERATIONS*_num_states);
     Eigen::MatrixXd Ad = _pDiscreteSystem->GetA();
     Eigen::MatrixXd Bd = _pDiscreteSystem->GetB();
+    Eigen::MatrixXd P = _Q;
 
-    P = MatrixXd::Zero(P.rows(),P.cols());
-    Pt = MatrixXd::Zero(Pt.rows(),Pt.cols());
-    for (int i=MAX_RICCATI_ITERATIONS; i>0; i--)
-    {
+    for (int i=MAX_RICCATI_ITERATIONS; i>0; i--){
         P = _Q + Ad.transpose()*P*Ad-Ad.transpose()*P*Bd*(_R+Bd.transpose()*P*Bd).inverse()*Bd.transpose()*P*Ad;
-        // Pt << P, Pt;
-        Pt.block(0,(i-1)*P.cols(),P.rows(),P.cols()) = P;
     }
-    // std::cout<<"P: "<<P<<std::endl;
-    // std::cout<<"Pt: "<<Pt<<std::endl;
-    P = Pt.block(0,0,P.rows(),P.cols());
     _K = (_R+Bd.transpose()*P*Bd).inverse()*Bd.transpose()*P*Ad;
     
     // TODO: Check if gain is successful or not
