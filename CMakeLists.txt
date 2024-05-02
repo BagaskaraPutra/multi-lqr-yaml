@@ -6,7 +6,7 @@ add_compile_options(-std=c++17)
 find_package(Eigen3 3.4 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
-add_subdirectory(lqr)
+add_subdirectory(multiLqr)
 
 set(COMMON_LINK_LIBRARIES 
   ${YAML_CPP_LIBRARIES}

@@ -8,10 +8,6 @@
 #include <eigen3/Eigen/Eigen>
 #include <eigen3/Eigen/Dense>
 
-#include "continuousLtiStateSpace.hpp"
-#include "discreteLtiStateSpace.hpp"
-#include "stateSpaceUtils.hpp"
-
 namespace multilqr
 {
 class IStateFeedback

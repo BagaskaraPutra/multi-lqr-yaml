@@ -43,7 +43,7 @@ A C++ library for calculating multiple linear quadratic regulator (LQR) controll
 ### Single Discrete-time LQR Gain
 
 Let's say you want to calculate the gain matrix $\mathbf{K}$ of a single discrete-time LQR controller.  
-However, you only have the continous-time linear time-invariant (LTI) state space:
+However, you only have the continuous-time linear time-invariant (LTI) state space:
 
 $\dot{\mathbf{x}}(t)=\mathbf{A}\mathbf{x}(t) + \mathbf{B}\mathbf{u}(t)$
 
