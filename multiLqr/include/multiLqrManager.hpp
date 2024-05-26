@@ -8,6 +8,7 @@ namespace multilqr{
     class MultiLqrManager
     {
     public:
+        MultiLqrManager();
         MultiLqrManager(const std::string& configPath);
         ~MultiLqrManager();
         void LoadConfig(const std::string& configPath);
@@ -16,7 +17,8 @@ namespace multilqr{
     protected:
         void loadConfigConstructor(const std::string& configPath);
         std::map<std::string, ILqr*> _lqrControllers;
-        bool _tuningMode;    
+        bool _tuningMode;
+        std::string _configPath;    
     };
 }
 

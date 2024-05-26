@@ -18,6 +18,7 @@ namespace multilqr
 class Dlqr : public ILqr
 {
 public:
+    Dlqr();
     Dlqr(const std::string& configPath);
     Dlqr(const Eigen::MatrixXd& A, 
         const Eigen::MatrixXd& B,
@@ -34,6 +35,7 @@ public:
 private:
     const int MAX_RICCATI_ITERATIONS = 100;
     
+    std::string _configPath;
     bool loadConfigConstructor(const std::string& configPath);
     bool calcGain();
     

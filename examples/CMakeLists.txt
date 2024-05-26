@@ -18,3 +18,21 @@ target_link_libraries(multiLqr PUBLIC
 target_include_directories(multiLqr PUBLIC
   ${COMMON_INCLUDE_DIRECTORIES}
 )
+
+# Single LQR gain with config reloading
+add_executable(singleLqrReload singleLqrReload.cpp)
+target_link_libraries(singleLqrReload PUBLIC
+  ${COMMON_LINK_LIBRARIES}
+)
+target_include_directories(singleLqrReload PUBLIC
+  ${COMMON_INCLUDE_DIRECTORIES}
+)
+
+# Multiple LQR gains with config reloading
+add_executable(multiLqrReload multiLqrReload.cpp)
+target_link_libraries(multiLqrReload PUBLIC
+  ${COMMON_LINK_LIBRARIES}
+)
+target_include_directories(multiLqrReload PUBLIC
+  ${COMMON_INCLUDE_DIRECTORIES}
+)

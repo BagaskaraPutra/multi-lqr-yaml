@@ -2,8 +2,17 @@
 
 namespace multilqr
 {
+
+Dlqr::Dlqr()
+{
+    _configPath = "";
+    _pContinuousSystem = NULL;
+    _pDiscreteSystem = NULL;
+}
+
 Dlqr::Dlqr(const std::string& configPath)
 {
+    _configPath = "";
     _pContinuousSystem = NULL;
     _pDiscreteSystem = NULL;
     if (!loadConfigConstructor(configPath)){
@@ -19,6 +28,7 @@ Dlqr::Dlqr(const Eigen::MatrixXd& A,
         const Eigen::MatrixXd& Q,
         const Eigen::MatrixXd& R)
 {
+    _configPath = "";
     _pDiscreteSystem = new DiscreteLtiStateSpace(A,B);
     _pContinuousSystem = (ContinuousLtiStateSpace*) _pDiscreteSystem;
     _Q = Q;
@@ -28,6 +38,7 @@ Dlqr::Dlqr(const Eigen::MatrixXd& A,
 
 Dlqr::Dlqr(YAML::Node &lqrNode)
 {
+    _configPath = "";
     _pContinuousSystem = NULL;
     _pDiscreteSystem = NULL;
     if (!LoadConfigLqrNode(lqrNode)){
@@ -111,6 +122,7 @@ bool Dlqr::loadConfigConstructor(const std::string& configPath)
     try
     {
         lqrNode = YAML::LoadFile(configPath.c_str());
+        _configPath = configPath;
     }
     catch(const std::exception& e)
     {
@@ -136,9 +148,11 @@ bool Dlqr::LoadConfig(const std::string& configPath)
         return false;
     }
     _tuningMode = lqrNode["tuningMode"].as<bool>();
-    if (_tuningMode)
+    // tuningMode active OR if the configPath is different compared to _configPath
+    if (_tuningMode || _configPath.compare(configPath))
     {
         LoadConfigLqrNode(lqrNode);
+        _configPath = configPath;
     }
     if(!calcGain()){
         return false;

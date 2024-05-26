@@ -15,6 +15,6 @@ stateSpace:
             0]
         samplingPeriod: 0.024
 weights:
-    Q: [40,0,
+    Q: [75,0,
         0,1]
     R: [1]  

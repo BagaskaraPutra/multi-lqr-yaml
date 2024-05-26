@@ -1,6 +1,11 @@
 #include "multiLqrManager.hpp"
 
 namespace multilqr{
+MultiLqrManager::MultiLqrManager()
+{
+    _configPath = "";
+}
+
 MultiLqrManager::MultiLqrManager(const std::string& configPath)
 {
    loadConfigConstructor(configPath);
@@ -26,9 +31,10 @@ void MultiLqrManager::LoadConfig(const std::string &configPath)
         return;
     }
     _tuningMode = multiLqrNode["tuningMode"].as<bool>();
-    if (_tuningMode)
+    if (_tuningMode || _lqrControllers.empty() || _configPath.compare(configPath))
     {
         YAML::Node variantsNode = multiLqrNode["LqrVariants"];
+        LoadConfigLqrVariantsNode(variantsNode);
     }
 }
 
@@ -39,7 +45,11 @@ void MultiLqrManager::LoadConfigLqrVariantsNode(YAML::Node &variantsNode)
         std::string variant = itVariants->first.as<std::string>();
         std::cout << variant << std::endl;
         YAML::Node lqrNode = variantsNode[variant];
-        _lqrControllers[variant] =  new Dlqr(lqrNode);
+        if (_lqrControllers.find(variant) == _lqrControllers.end()){
+            _lqrControllers[variant] =  new Dlqr(lqrNode);
+            continue;
+        }
+        _lqrControllers.at(variant)->LoadConfigLqrNode(lqrNode);
     }
 }
 
